@@ -10,14 +10,24 @@ const routes = [
     redirect:"/home"
   },
   {
-    path:"/header",
-    name:"Header",
-    component:()=>import("@/views/Header")
-  },
-  {
     path: '/home',
     name: 'Home',
-    component: ()=>import("@/views/Home")
+    redirect:"/home/index",
+    component: ()=>import("@/views/Home"),
+    children:[
+      {
+        path:"index",
+        component:()=>import("@/views/chartView")
+      },
+      {
+        path:"article",
+        component:()=>import("@/views/ArticleView")
+      },
+      {
+        path:"users",
+        component:()=>import("@/views/userView")
+      }
+    ]
   },
   {
     path:'/login',

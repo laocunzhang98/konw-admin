@@ -12,9 +12,9 @@
       <el-menu-item index="1"><i class="el-icon-s-home"></i> 首页</el-menu-item>
       <el-menu-item index="2"><i class="el-icon-menu"></i> 菜单</el-menu-item>
       <el-menu-item index="3"><i class="el-icon-s-data"></i> 数据展示</el-menu-item>
-      <el-menu-item index="4"><i class="el-icon-user"></i> 用户管理</el-menu-item>
+      <el-menu-item index="4" @click.native="ManageUser"><i class="el-icon-user"></i> 用户管理</el-menu-item>
       <el-menu-item index="5"><i class="el-icon-data-analysis"></i> 操作日志</el-menu-item>
-      <el-menu-item index="6"><i class="el-icon-reading"></i> 文章管理</el-menu-item>
+      <el-menu-item index="6" @click.native="ManageArticle" ><i class="el-icon-reading"></i> 文章管理</el-menu-item>
     </el-menu>
   </div>
 </template>
@@ -28,6 +28,12 @@ export default {
     }
   },
   methods: {
+    ManageArticle(){
+      this.$router.push("/home/article")
+    },
+    ManageUser(){
+      this.$router.push("/home/users")
+    },
     menuSelect(){
 
     }
@@ -45,7 +51,7 @@ export default {
 }
 ::v-deep {
   .el-menu-item.is-active{
-    background-color: rgb(53,63,79)!important;
+    background-color: rgb(13, 21, 34)!important;
   }
 }
 .logo{
