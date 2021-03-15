@@ -26,6 +26,14 @@ const routes = [
       {
         path:"users",
         component:()=>import("@/views/userView")
+      },
+      {
+        path:"users/:uid",
+        component:()=>import("@/views/userDetail")
+      },
+      {
+        path:"manager",
+        component:()=>import("@/views/superManger")
       }
     ]
   },

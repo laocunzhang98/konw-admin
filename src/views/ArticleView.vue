@@ -7,7 +7,7 @@
             <el-form-item label="文章名:">
               <span>{{ scope.row.title }}</span>
             </el-form-item>
-            <el-form-item label="文章 Id:">
+            <el-form-item label="文章Id:">
               <span>{{ scope.row.id }}</span>
             </el-form-item>
             <el-form-item label="分类:">
@@ -25,14 +25,17 @@
             <el-form-item label="作者:">
               <span>{{ scope.row.nickname }}</span>
             </el-form-item>
+            <el-form-item label="用户ID:">
+              <span>{{ scope.row.uid }}</span>
+            </el-form-item>
             <el-form-item label="发表日期:">
               <span>{{ scope.row.createdAt }}</span>
             </el-form-item>
-            <el-form-item label="组织归属:">
-              <span>{{ scope.row.organize_id }}</span>
+            <el-form-item label="所属组织ID:">
+              <span>{{ scope.row.organize_id | getOrganizeId}}</span>
             </el-form-item>
             <el-form-item label="是否公开:">
-              <span>{{ scope.row.public }}</span>
+              <span>{{ scope.row.public | getPublic}}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -63,46 +66,149 @@
         </template>
         <template slot-scope="scope">
           <el-button size="mini" type="primary">查看</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.row.uid, scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <el-dialog title="删除文章" :visible.sync="dialogVisible" width="width">
+      <div>
+        <span style="margin-right:10px">该文章是否存在违规</span>
+        <el-checkbox v-model="checked" @change="handleVio"></el-checkbox>
+      </div>
+      <div v-show="vioShow">
+        <div style="margin:15px 0">
+          <span>请选择违规类型: </span>
+          <el-select v-model="model" placeholder size="mini">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </div>
+        <div>
+          <span>请填写违规信息: </span>
+          <el-input v-model="vioInfo" placeholder></el-input>
+        </div>
+      </div>
+      <div slot="footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="current">确 定</el-button>
+      </div>
+    </el-dialog>
     <div class="pagination">
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        :total="1000">
-      </el-pagination>
+      <el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
     </div>
   </div>
 </template>
 
 <script>
-import { getArticleList } from "@/api/article";
-import {getFormatDate} from "@/utils/utils";
+import { getArticleList,adminDeleteArticle } from "@/api/article";
+import { handleViolation,handleViolationTime } from "@/api/user";
+import { SetSysApply } from "@/api/notice";
+import { getFormatDate } from "@/utils/utils";
 export default {
   data() {
     return {
       tableData: [],
       search: "",
+      dialogVisible: false,
+      checked: false,
+      vioInfo: "",
+      viouid:0,
+      vioid:0,
+      vioShow: false,
+      options:[
+        {
+          label:"色情",
+          value:"色情",
+        },
+        {
+          label:"辱骂",
+          value:"辱骂",
+        },
+        {
+          label:"反动",
+          value:"反动",
+        },
+        {
+          label:"诈骗",
+          value:"诈骗",
+        },
+        {
+          label:"广告",
+          value:"广告",
+        },
+        {
+          label:"不实信息",
+          value:"不实信息",
+        }
+      ],
+      model:""
     };
   },
   created() {
-    getArticleList().then((res) => {
-      console.log(res);
-      this.tableData = res.data.rows;
-      console.log(this.tableData);
-    });
+    this.initArtileList()
+  },
+  filters: {
+    getOrganizeId(val) {
+      if (val) {
+        return val;
+      }
+      return "暂无";
+    },
+    getPublic(val) {
+      if (val == 1) {
+        return "公开";
+      }
+      return "不公开";
+    },
   },
   mounted() {},
   methods: {
-    getFormatDate(date){
-      return getFormatDate(date)
+    async current(){
+      this.dialogVisible = false
+      if(this.checked){
+        let data = {
+          uid:this.viouid,
+          id:this.vioid,
+          info:this.vioInfo,
+          type:this.model
+        }
+        await handleViolation(data).then( async res=>{
+          await SetSysApply(data).then(res=>{
+            console.log(res)
+          })
+        })
+      }
+      await adminDeleteArticle({id:this.vioid}).then(async res=>{
+        await this.initArtileList()
+      })
+    },
+    initArtileList(){
+      getArticleList().then((res) => {
+        this.tableData = res.data.rows;
+      });
+    },
+    getFormatDate(date) {
+      return getFormatDate(date);
     },
     tableRowClassName() {
       return "light-row";
     },
-    handleDelete() {},
+    handleDelete(uid,id) {
+      this.viouid = uid
+      this.vioid = id
+      this.dialogVisible = true;
+    },
+    handleVio(val) {
+      if(val){
+        this.vioShow = true
+      }else{
+        this.vioShow = false
+      }
+    },
   },
 };
 </script>
@@ -130,7 +236,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  .pagination{
+  .pagination {
     margin: 25px 0;
   }
 }

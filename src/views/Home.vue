@@ -26,12 +26,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .home{
   height: 100%;
   display: flex;
   .content{
-    flex: 1;
+    width: 100%;
     box-sizing: border-box;
+    overflow: auto;
   }
 }
   .aside{

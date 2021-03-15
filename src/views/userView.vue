@@ -34,19 +34,19 @@
           </el-form>
         </template>
       </el-table-column>
+      <el-table-column width="width" label="用户ID">
+        <template slot-scope="scope">
+          <div>{{scope.row.id}}</div>
+        </template>
+      </el-table-column>
       <el-table-column width="width" label="作者">
         <template slot-scope="scope">
           <div>{{scope.row.nickname}}</div>
         </template>
       </el-table-column>
-      <el-table-column width="width" label="职业">
+      <el-table-column width="width" label="邮箱">
         <template slot-scope="scope">
-          <div>{{scope.row.job}}</div>
-        </template>
-      </el-table-column>
-      <el-table-column width="width" label="描述">
-        <template slot-scope="scope">
-          <div>{{scope.row.describe}}</div>
+          <div>{{scope.row.email}}</div>
         </template>
       </el-table-column>
       <el-table-column width="width" label="最后一次登录日期">
@@ -59,8 +59,8 @@
           <el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
         </template>
         <template slot-scope="scope">
-          <el-button size="mini" type="primary">查看</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          <el-button size="mini" type="primary" @click="handleDetail(scope.$index, scope.row)">查看</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">注销</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -88,6 +88,9 @@ export default {
   },
   mounted() {},
   methods: {
+    handleDetail(index,row){
+      this.$router.push(`/home/users/${row.id}`)
+    },
     tableRowClassName() {
       return "light-row";
     },
