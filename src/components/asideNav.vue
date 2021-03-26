@@ -9,7 +9,7 @@
       active-text-color="#ffd04b"
       >
       <div class="logo"><img src="../assets/logo.png" alt=""></div>
-      <el-menu-item index="1"><i class="el-icon-s-home"></i> 首页</el-menu-item>
+      <el-menu-item index="1" @click.native="gohome"><i class="el-icon-s-home"></i> 首页</el-menu-item>
       <el-menu-item index="3"><i class="el-icon-s-data"></i> 数据展示</el-menu-item>
       <el-menu-item index="4" @click.native="ManageUser"><i class="el-icon-user"></i> 用户管理</el-menu-item>
       <el-menu-item index="5"><i class="el-icon-data-analysis"></i> 操作日志</el-menu-item>
@@ -28,6 +28,9 @@ export default {
     }
   },
   methods: {
+    gohome(){
+      this.$router.push("/home/index")
+    },
     ManageSuper(){
       this.$router.push("/home/manager")
     },
