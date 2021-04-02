@@ -6,33 +6,56 @@
         <div class="card-left">
           <span class="circle"></span>
           <span>当前在线人数</span>
-          <div class="number">123</div>
+          <div class="number">{{onlineMember}}</div>
         </div>
-        <el-progress type="circle" :percentage="30"></el-progress>
+        <el-progress type="circle" 
+        :percentage="parseInt(onlineMember*100/dayMember)"
+        v-if="!isNaN(parseInt(onlineMember*100/dayMember))"
+        ></el-progress>
       </div>
       <div class="card">
         <div class="card-left">
           <span class="circle"></span>
           <span>当日在线人数</span>
-          <div class="number">123</div>
+          <div class="number">{{dayMember}}</div>
         </div>
-        <el-progress type="circle" :percentage="30"></el-progress>
+        <el-progress type="circle" 
+        :percentage="parseInt(dayMember*100/allMember)"
+        v-if="parseInt(dayMember*100/allMember)"
+        ></el-progress>
       </div>
       <div class="card">
         <div class="card-left">
           <span class="circle"></span>
           <span>用户总人数</span>
-          <div class="number">123</div>
+          <div class="number">{{allMember}}</div>
         </div>
-        <el-progress type="circle" :percentage="30"></el-progress>
+        <el-progress type="circle" :percentage="100"></el-progress>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-export default {
+import {getSameDayMember,getUserAllMember,getNowOnlineMember} from "@/api/user"
+import {getArticleNumber,getFileNumber} from "@/api/statis"
+export default { 
+  data() {
+    return {
+      onlineMember:0,
+      dayMember:0,
+      allMember:0
+    }
+  },
   components: {},
+  created(){
+    getSameDayMember().then(res=>{this.dayMember = res.data.count})
+    getUserAllMember().then(res=>{this.allMember = res.data})
+    getNowOnlineMember().then(res=>{this.onlineMember = res.data.count})
+    getArticleNumber({day:0}).then(res=>{console.log(res)})
+    getFileNumber({day:1}).then(res=>{console.log(res)})
+  },
+  methods:{}
 };
 </script>
 
